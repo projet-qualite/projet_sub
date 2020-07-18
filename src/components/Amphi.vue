@@ -5,7 +5,7 @@
      <p>Le nom:    <input id="nom" v-model="nom"/> Le nom est : {{ nom }} </p>
      <p>Le nombre de places:    <input v-model="places_amph" /> le nombre de places est: {{ places_amph }}  </p>
      <p>Le nombre de rangs:    <input v-model="rangs" /> le nombre de rangs: {{ rangs }} </p>
-     <button name="ajouter" v-on:click="Ajouter">Ajouter rang:</button>
+     <button name="ajouter" @click="AjouterRang">Ajouter rang:</button>
      <span v-html="HTMLcontent">
          
      </span>
@@ -23,21 +23,37 @@ export default {
     rangs: String,
     nom: String,
     HTMLcontent: null,
+    HTMLcontent1: null,
     lignes:String,
     ra: Rangee,
+    rangees: Array,
+    i:Number
+  },
+  data: function() {
+    return {
 
+    };
   },
   methods:{
-      Ajouter()
+      AjouterRang()
       {
-        let ra,i=1;
-        let rangees=[];
         this.HTMLcontent='';
-          this.HTMLcontent +='<p>Rang numero: '+i+' Le nombre de lignes:   <input v-model="lignes" />';
-          this.HTMLcontent+='<button name="ajouter_l" v-on:click="Ajouter_l">Ajouter ligne:</button> </p>';
-        ra = new Rangee(1,);
-        rangees.push(ra);
-        i++;
+          this.HTMLcontent +='<p>Rang numero: '+this.i+' Le nombre de lignes:   <input v-model="lignes" />';
+          this.HTMLcontent+='<button name="ajouter_l" v-on:click="@click="AjouterRang"">Ajouter ligne:</button> </p>';
+      },
+      Ajouterlignes()
+      {
+        this.HTMLcontent1='';
+          this.HTMLcontent1 +='<p>Rang numero: '+this.i+' Le nombre de lignes:   <input v-model="lignes" />';
+          this.HTMLcontent1+='<button name="ajouter_l" v-on:click="Ajouter_l">Ajouter ligne:</button> </p>';
+      },
+      valider()
+      {
+        this.i=1;
+        this.ra = new Rangee(1,12);
+        this.rangees.push(this.ra);
+        this.i++;
+        return this.rangees;
       }
   }
 
