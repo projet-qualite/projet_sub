@@ -27,7 +27,9 @@ export default {
     lignes:String,
     ra: Rangee,
     rangees: Array,
-    i:Number
+    i:Number,
+    lettre: String,
+    plcs:String
   },
   data: function() {
     return {
@@ -39,13 +41,15 @@ export default {
       {
         this.HTMLcontent='';
           this.HTMLcontent +='<p>Rang numero: '+this.i+' Le nombre de lignes:   <input v-model="lignes" />';
-          this.HTMLcontent+='<button name="ajouter_l" v-on:click="@click="AjouterRang"">Ajouter ligne:</button> </p>';
+          this.HTMLcontent+='<button name="ajouter_l" v-on:click="@click="Ajouterlignes"">Ajouter ligne:</button> </p>';
       },
       Ajouterlignes()
       {
         this.HTMLcontent1='';
-          this.HTMLcontent1 +='<p>Rang numero: '+this.i+' Le nombre de lignes:   <input v-model="lignes" />';
-          this.HTMLcontent1+='<button name="ajouter_l" v-on:click="Ajouter_l">Ajouter ligne:</button> </p>';
+        for(let j=0;j<this.lignes;j++)
+        {
+          this.HTMLcontent1 +='<p>Ligne numero: '+j+' Lettre de la ligne:   <input v-model="lettre" /> Le nombre de places:   <input v-model="plcs" /></p>';
+        }
       },
       valider()
       {
