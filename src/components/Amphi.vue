@@ -1,7 +1,7 @@
 <template>
 <div>
 <h1>{{ msg }}</h1>
-<div id="left">
+<div>
     <p><input id="file_json" accept="application/JSON" @change="onFileChange" type="file"/><br/>
     <button @click="valider">Valider</button> </p>
 </div>
