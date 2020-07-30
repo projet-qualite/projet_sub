@@ -2,18 +2,29 @@
 <div>
 <h1>{{ msg }}</h1>
 <div>
-    <p><input id="file_json" accept="application/JSON" @change="onFileChange" type="file"/><br/>
-    <button @click="valider">Valider</button> </p>
+  <fieldset>
+  
+    <p><input id="file_json" accept="application/JSON" @change="onFileChange" type="file"  />
+<button @click="valider">Valider</button> </p>
+  </fieldset>
 </div>
+
+<div id="amphi-car">
+<p><label > Le nom:</label>    <input v-model="nom_A" /><label class="tab"> Le nombre de places:  </label>  <input v-model="places_amph" /> 
+<label class="tab">Le nombre de rangs:  </label>  <input v-model="rangs" />  </p>
+</div>
+
+
 <div>
-<p>Le nom:    <input v-model="nom_A" /> Le nom est : {{ nom_A }} </p>
-<p>Le nombre de places:    <input v-model="places_amph" /> le nombre de places est: {{ places_amph }}  </p>
-<p>Le nombre de rangs:    <input v-model="rangs" /> le nombre de rangs: {{ rangs }} </p>
-<span v-for="rangs in donnees.ranges" :key="rangs" v-show="vrai">
+<span v-for="dns in donnees" :key="dns" v-show="vrai">
+<span v-for="rangs in dns.ranges" :key="rangs">
  Numero du rang:  <input v-bind:value="rangs.id"/><br><br>
  <span v-for="lig in rangs.lignes" :key="lig">
-  Lettre de la ligne:  <input v-bind:value="lig.lettre"/> &nbsp; &nbsp;
-  Nombres de places: <input v-bind:value="lig.nbr_places"/><br><br>
+  Lettre de la ligne:  <input v-bind:value="lig.lettre"/> <br><br>
+ <span v-for="plc in lig.places" :key="plc">
+   chaise:  <input v-bind:value="plc"/><br><br>
+  </span>
+  </span>
   </span>
   </span>
 </div>
@@ -40,9 +51,9 @@ export default {
   },
   methods: {
     valider() {
-      this.nom_A= this.donnees.nom;
-      this.places_amph= this.donnees.nombre_places;
-      this.rangs = this.donnees.nombre_range;
+      this.nom_A= this.donnees[0].nom;
+      this.places_amph= this.donnees[0].nombre_places;
+      this.rangs = this.donnees[0].nombre_range;
       this.vrai=true;
       //this.amphi.generatePlaces()
     },
@@ -76,8 +87,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
+h1 {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color:midnightblue;
+  margin-top: 10px;
 }
 ul {
   list-style-type: none;
@@ -90,6 +106,22 @@ li {
 a {
   color: #42b983;
 }
+.tab{
+  margin-left: 30px;
+}
+#amphi-car{
+  text-align: center;
+}
+button{
+  height: 30px;
+  width: 120px;
+  border-radius: 4px;
+  background-color:lightskyblue;
+  border: 1px solid #555555;
+  font-size: 15px;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  margin-left: 20px;
+}
 div{
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -98,4 +130,15 @@ div{
   color: #000000;
   margin-top: 10px;
 }
+
+#file_json{
+    width: 200px;
+    border:black;
+}
+fieldset{
+  text-align: center;
+  color: midnightblue;
+}
+
+
 </style>
