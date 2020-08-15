@@ -51,7 +51,7 @@ export class Amphi{
 
         return p
     }
-
+    //renvoie le tableau des place dans un objet placemet spécifique 
     chercher_placement(libelle)
     {
         for(let placement of this._placements)
@@ -62,6 +62,7 @@ export class Amphi{
             }
         }
     }
+    //renvoie un objet ligne à partir de la lettre de la ligne choisie
     chercher_ligne(lettre)
     {
         for(let ligne of this._lignes)
@@ -72,16 +73,18 @@ export class Amphi{
             }
         }
     }
+    //modifier les places d'une ligne
     modifier_ligne_place(lettre,id,occupee)
     {
         for(let ligne of this._lignes)
         {
             if(ligne._lettre === lettre)
             {
-                ligne.moifier_place(id,occupee);
+                ligne.modifier_place(id,occupee);
             }
         }
     }
+    //reinitialiser le plan de l'amphi pour qu'il s'affiche non occuppé
     reinistialiser_placements()
     {
         for(let ligne of this._lignes)
@@ -96,6 +99,7 @@ export class Amphi{
     {
         this._placements.push(placement);
     }
+    //renvoie un tableau de places occuppées
     trouver_places_occupee()
     {
         let places =[];
@@ -111,6 +115,7 @@ export class Amphi{
         }
         return places;
     }
+    //modifier les places d'un placement à partir d'un tableaux places passer en paramètre
     modifier_placements(libelle,places)
     {
         for(let placement of this._placements)

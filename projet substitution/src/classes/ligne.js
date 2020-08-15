@@ -57,7 +57,7 @@ export class Ligne{
         }
     }
 
-    moifier_place(id,occupee)
+    modifier_place(id,occupee)
     {
         for(let plc of this._places)
         {
