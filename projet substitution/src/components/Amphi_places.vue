@@ -1,0 +1,375 @@
+<template>
+  <div>
+<div>
+  <fieldset>
+<p><input id="file_json" accept="application/JSON" @change="onFileChange" type="file" value="parcourir" />
+<button @click="enregistrer" class="same">Sauvegarder</button> </p>
+  </fieldset>
+</div>
+
+<div id="amphi-car">
+<body>
+<p>
+<label class="tab"> Liste des placements:  </label> 
+<select v-model="selected" class="inp_selec">
+  <option @click="afficher" v-for="(plcs,y) in this.amphi._placements" :key="y">{{ plcs._libelle }}</option>
+</select>
+<button  class="same" @click="nvx_placement">Nouveau placements</button> 
+<button  class="same" @click="modifier_placement">Modifier placements</button> 
+<button  class="same" @click="supprimer_placement">Supprimer placements</button> 
+<button @click="reinistialiser" class="same">Réinistialiser</button>
+</p>
+<fieldset class="FormPlacement" v-show="aficher_nvx_placements">
+<p>
+<label class="tab"> Libellé de placements:  </label><input class="inp_selec" v-model="lib_placement" />
+<button @click="ajouter" class="btnForm">Ajouter</button>
+<label class="tab"> Distance entre étudiants:  </label>  <input v-model="dist" class="inp_selec"/>   
+<button @click="generer" class="btnForm">Génerer</button>
+<button @click="annuler" class="btnForm">Annuler</button>
+</p></fieldset>
+<fieldset class="FormPlacement" v-show="affich_generer_modif">
+<p>
+<label class="tab"> Distance entre étudiants:  </label>  <input v-model="dist" class="inp_selec"/>   
+<button @click="generer" class="btnForm">Génerer</button>
+<button @click="modifier" class="btnForm">Modifier</button>
+<button @click="annuler" class="btnForm">Annuler</button>
+</p></fieldset>
+</body>
+</div>
+<div id="glob" >
+  <tbody>
+    <tr v-for="(lignes,u) in amphi._lignes" v-bind:key="u" v-show="vrai">
+      <td v-for="(places,b) in amphi._lignes[u]._places" v-bind:key="b"> 
+        <span v-if="places._occupee==='oui'">
+          <button class="btn_place_rempl"  v-if="places._id !==0" @click="changer_plcs(lignes._lettre,places._id)">{{ lignes._lettre+""+ places._id }}</button>
+          <p  v-else ></p><br/><br/>
+        </span>
+        <span v-else-if="places._occupee==='non'">
+          <button class="btn_place"  v-if="places._id !==0" @click="changer_plcs(lignes._lettre,places._id)">{{ lignes._lettre+""+ places._id }}</button>
+          <p  v-else ></p><br/><br/>
+        </span>
+      </td>
+      </tr>
+  </tbody>
+</div>
+</div>
+</template>
+
+<script>
+/* eslint-disable */
+import {Amphi} from '../classes/amphi.js'
+import {Ligne} from '../classes/ligne.js'
+import {Place} from '../classes/place.js'
+import {Placement} from '../classes/placement.js'
+export default {
+  name: "Amphi_placements",
+  props: {
+    msg: String,
+  },
+  data: function() {
+    return {
+      vrai: false,
+      rang_bool:false,
+      donnees: Object,
+      lignes: Array,
+      placements:Array,
+      amphi: Amphi,
+      ligne: Ligne,
+      place:Place,
+      placement:Placement,
+      places: Array,
+      dist: "",
+      selected:"",
+      affich_generer_modif:false,
+      occupee:true,
+      places_occupées:[],
+      aficher_nvx_placements:false,
+      lib_placement:"",
+    };
+  },
+  methods:
+  {
+    annuler()
+    {
+      this.aficher_nvx_placements=false;
+      this.affich_generer_modif=false;
+    },
+    modifier_placement()
+    {
+      this.affich_generer_modif=true;
+      this.aficher_nvx_placements=false;
+    },
+    modifier()
+    {
+      this.places= this.amphi.trouver_places_occupee();
+      this.amphi.modifier_placements(this.selected,this.places);
+      this.affich_generer_modif=false;
+    },
+    nvx_placement()
+    {
+      this.selected="";
+      this.reinistialiser();
+      this.aficher_nvx_placements=true;
+    },
+    supprimer_placement()
+    {
+      this.amphi.supprimer_placements(this.selected);
+      this.reinistialiser();
+    },
+     ajouter()
+    {
+      this.places= this.amphi.trouver_places_occupee();
+      this.amphi.Ajouter_placement(new Placement(this.lib_placement,this.places));
+      this.aficher_nvx_placements=false;
+      this.affich_generer_modif=false;
+      this.reinistialiser();
+    },
+    afficher()
+    {
+      this.reinistialiser();
+      this.places_occupées= this.amphi.chercher_placement(this.selected);
+      for(let plc_occ of this.places_occupées)
+      {
+       for(let ligne of this.amphi._lignes) 
+       {
+         for(let place of ligne._places)
+         {
+           let lib_plc=ligne._lettre+place._id;
+           if( lib_plc === plc_occ)
+           {
+             place._occupee="oui";
+           }
+         }
+       }
+      }
+    },
+    reinistialiser()
+    {
+      this.amphi.reinistialiser_placements();
+    },
+    changer_plcs(lettre,id)
+    {
+      this.ligne = this.amphi.chercher_ligne(lettre);
+      this.place = this.ligne.chercher_place(id);
+      if(this.place._occupee==='non')
+      {
+        this.amphi.modifier_ligne_place(lettre,id,'oui')
+      }else
+      {
+        this.amphi.modifier_ligne_place(lettre,id,'non')
+      }
+      this.vrai=false;
+      this.vrai=true;
+    },
+   generer()
+    {
+      this.nbr_et;
+      let h=0;
+      let plcs;
+      let cpt=0;
+      this.reinistialiser();
+      for(let j=0;j<this.amphi._lignes.length;j++)
+      {
+        if(  j%2 === 0 || j===0)
+        {
+          plcs=0;
+          plcs = this.amphi._lignes[j]._places.length;
+          h=0;
+          for( let place of this.amphi._lignes[j]._places)
+          {
+            if(h<plcs)
+          {
+            place._occupee="oui";
+            cpt++;
+            if(plcs>parseInt(this.dist)+cpt)
+            {
+              place._occupee="oui";
+              h+=parseInt(this.dist)+1;
+              cpt++;
+            }
+
+          }
+          }
+        }
+      }
+
+    },
+    enregistrer()
+    {
+      this.reinistialiser();
+      const data = JSON.stringify(this.amphi)
+      let blob = new Blob([data], { type: 'text/plain;charset=utf-8;' })
+      if (navigator.msSaveBlob) { // IE 10+
+         navigator.msSaveBlob(blob, "Amphi.json")
+      } else {
+        let link = document.createElement('a')
+        if (link.download !== undefined) 
+        { // feature detection
+      // Browsers that support HTML5 download attribute
+        let url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        link.setAttribute('download', "Amphi.json")
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        }
+     }
+    },
+    onFileChange(e) {
+     let files = e.target.files || e.dataTransfer.files;
+     if (!files.length) return;
+     this.readFile(files[0]);
+     this.vrai=true;
+   },
+   readFile(file) {
+     let reader = new FileReader();
+     reader.onload = e => {
+       this.donnees = JSON.parse(e.target.result);
+       this.remplir();
+     };
+     reader.readAsText(file);
+   },
+   remplir()
+   {
+     this.lignes = new Array();
+     this.places= new Array();
+     this.placements= new Array();
+          for(let j=0; j<this.donnees._lignes.length;j++)
+          {
+            for(let m=0;m<this.donnees._lignes[j]._places.length;m++)
+            {
+              this.place= new Place(this.donnees._lignes[j]._places[m]._id,this.donnees._lignes[j]._places[m]._occupee);
+              this.places[m]= this.place;
+            }
+            this.ligne= new Ligne(this.donnees._lignes[j]._lettre,this.places);
+            this.lignes[j]=this.ligne;
+            this.places=[];
+          }
+          for(let j=0; j<this.donnees._placements.length;j++)
+          {
+            for(let m=0;m<this.donnees._placements[j]._places.length;m++)
+            {
+              this.places[m]= this.donnees._placements[j]._places[m];
+            }
+            this.placement=new Placement(this.donnees._placements[j]._libelle,this.places)
+            this.placements[j]=this.placement;
+            this.places=[];
+          }
+         this.amphi= new Amphi(this.donnees._nom,this.lignes,this.placements);
+         this.lignes=[];
+   }
+  }
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+h1 {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color:midnightblue;
+  margin-top: 10px;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+a {
+  color: #42b983;
+}
+.tab{
+  margin-left: 30px;
+}
+#amphi-car{
+  text-align: center;
+}
+select
+{
+  height: 30px;
+  width: 120px;
+  border-radius: 4px;
+  border: 1px solid #555555;
+}
+.inp_selec{
+  height: 25px;
+  width: 150px;
+  border-radius: 4px;
+  border: 1px solid #555555;
+  font-size: 15px;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  margin-left: 20px;
+}
+.FormPlacement{
+  color: black;
+}
+.same{
+  height: 30px;
+  width: 190px;
+  border-radius: 4px;
+  background-color:lightskyblue;
+  border: 1px solid #555555;
+  font-size: 15px;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  margin-left: 20px;
+}
+.btnForm{
+   height: 30px;
+  width: 120px;
+  border-radius: 4px;
+  background-color:lightskyblue;
+  border: 1px solid #555555;
+  font-size: 15px;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  margin-left: 20px;
+}
+div{
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: left;
+  color: #000000;
+  margin-top: 10px;
+}
+
+#file_json{
+    width: 200px;
+    border:black;
+}
+fieldset{
+  text-align: center;
+  color: midnightblue;
+}
+#glob{
+  text-align: center;
+}
+.div_rang{
+  margin: 10px;;
+  border: 1px solid black;
+  display: inline-block;
+  padding: 5;
+}
+.btn_place{
+  border: 0.5px solid black;
+  width: 40px;
+  height:40px;
+  border-radius: 7px;
+}
+.btn_place_rempl
+{
+  border: 0.5px solid black;
+  width: 40px;
+  height:40px;
+  border-radius: 7px;
+  background-color: mediumvioletred;
+}
+#affich{
+  text-align: center;
+}
+</style>
