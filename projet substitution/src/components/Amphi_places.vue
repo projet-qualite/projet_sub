@@ -11,7 +11,7 @@
 <body>
 <p>
 <label class="tab"> Liste des placements:  </label> 
-<select v-model="selected" class="inp_selec">
+<select v-model="selected_placement" class="inp_selec">
   <option @click="afficher" v-for="(plcs,y) in this.amphi._placements" :key="y">{{ plcs._libelle }}</option>
 </select>
 <button  class="same" @click="nvx_placement">Nouveau placements</button> 
@@ -41,11 +41,11 @@
     <tr v-for="(lignes,u) in amphi._lignes" v-bind:key="u" v-show="vrai">
       <td v-for="(places,b) in amphi._lignes[u]._places" v-bind:key="b"> 
         <span v-if="places._occupee==='oui'">
-          <button class="btn_place_rempl"  v-if="places._id !==0" @click="changer_plcs(lignes._lettre,places._id)">{{ lignes._lettre+""+ places._id }}</button>
+          <button class="btn_place_rempl"  v-if="places._id !==0" @click="changer_status_plcs(lignes._lettre,places._id)">{{ lignes._lettre+""+ places._id }}</button>
           <p  v-else ></p><br/><br/>
         </span>
         <span v-else-if="places._occupee==='non'">
-          <button class="btn_place"  v-if="places._id !==0" @click="changer_plcs(lignes._lettre,places._id)">{{ lignes._lettre+""+ places._id }}</button>
+          <button class="btn_place"  v-if="places._id !==0" @click="changer_status_plcs(lignes._lettre,places._id)">{{ lignes._lettre+""+ places._id }}</button>
           <p  v-else ></p><br/><br/>
         </span>
       </td>
@@ -57,19 +57,14 @@
 
 <script>
 /* eslint-disable */
-import {Amphi} from '../classes/amphi.js'
-import {Ligne} from '../classes/ligne.js'
-import {Place} from '../classes/place.js'
-import {Placement} from '../classes/placement.js'
+import {Amphi} from "../classes/amphi.js"
+import {Ligne} from "../classes/ligne.js"
+import {Place} from "../classes/place.js"
+import {Placement} from "../classes/placement.js"
 export default {
   name: "Amphi_placements",
-  props: {
-    msg: String,
-  },
   data: function() {
     return {
-      vrai: false,
-      rang_bool:false,
       donnees: Object,
       lignes: Array,
       placements:Array,
@@ -79,9 +74,8 @@ export default {
       placement:Placement,
       places: Array,
       dist: "",
-      selected:"",
+      selected_placement:"",
       affich_generer_modif:false,
-      occupee:true,
       places_occupées:[],
       aficher_nvx_placements:false,
       lib_placement:"",
@@ -89,45 +83,11 @@ export default {
   },
   methods:
   {
-    annuler()
-    {
-      this.aficher_nvx_placements=false;
-      this.affich_generer_modif=false;
-    },
-    modifier_placement()
-    {
-      this.affich_generer_modif=true;
-      this.aficher_nvx_placements=false;
-    },
-    modifier()
-    {
-      this.places= this.amphi.trouver_places_occupee();
-      this.amphi.modifier_placements(this.selected,this.places);
-      this.affich_generer_modif=false;
-    },
-    nvx_placement()
-    {
-      this.selected="";
-      this.reinistialiser();
-      this.aficher_nvx_placements=true;
-    },
-    supprimer_placement()
-    {
-      this.amphi.supprimer_placements(this.selected);
-      this.reinistialiser();
-    },
-     ajouter()
-    {
-      this.places= this.amphi.trouver_places_occupee();
-      this.amphi.Ajouter_placement(new Placement(this.lib_placement,this.places));
-      this.aficher_nvx_placements=false;
-      this.affich_generer_modif=false;
-      this.reinistialiser();
-    },
+    //afficher les placements choisis dans la liste déroulante
     afficher()
     {
       this.reinistialiser();
-      this.places_occupées= this.amphi.chercher_placement(this.selected);
+      this.places_occupées= this.amphi.chercher_placement(this.selected_placement);
       for(let plc_occ of this.places_occupées)
       {
        for(let ligne of this.amphi._lignes) 
@@ -143,11 +103,45 @@ export default {
        }
       }
     },
-    reinistialiser()
+    //Affiche le div pour donner à l'utilisateur la possibilité d'ajouter le libellé du placement et ses places
+    nvx_placement()
     {
-      this.amphi.reinistialiser_placements();
+      this.selected_placement="";
+      this.reinistialiser();
+      this.aficher_nvx_placements=true;
     },
-    changer_plcs(lettre,id)
+    ajouter()
+    {
+      this.places= this.amphi.trouver_places_occupee();
+      this.amphi.Ajouter_placement(new Placement(this.lib_placement,this.places));
+      this.aficher_nvx_placements=false;
+      this.affich_generer_modif=false;
+      this.reinistialiser();
+    },
+    //Affiche le div pour donner à l'utilisateur la possibilité de modifier le libellé du placement et ses places
+    modifier_placement()
+    {
+      this.affich_generer_modif=true;
+      this.aficher_nvx_placements=false;
+    },
+    modifier()
+    {
+      this.places= this.amphi.trouver_places_occupee();
+      this.amphi.modifier_placements(this.selected_placement,this.places);
+      this.affich_generer_modif=false;
+    },
+    supprimer_placement()
+    {
+      this.amphi.supprimer_placements(this.selected_placement);
+      this.reinistialiser();
+    },
+    annuler()
+    {
+      this.aficher_nvx_placements=false;
+      this.affich_generer_modif=false;
+    },
+    //changer manuellement si une place est occuppe ou pas
+    changer_status_plcs(lettre,id)
     {
       this.ligne = this.amphi.chercher_ligne(lettre);
       this.place = this.ligne.chercher_place(id);
@@ -160,6 +154,11 @@ export default {
       }
       this.vrai=false;
       this.vrai=true;
+    },
+    //reinistialiser le plan de l'amphi pour que les places se vident
+    reinistialiser()
+    {
+      this.amphi.reinistialiser_placements();
     },
    generer()
     {
@@ -194,6 +193,7 @@ export default {
       }
 
     },
+    //sauvegarder les données dans un fichier json 
     enregistrer()
     {
       this.reinistialiser();
@@ -230,6 +230,7 @@ export default {
      };
      reader.readAsText(file);
    },
+   //remplir une instance de la classe Amphi à partir du fichier json
    remplir()
    {
      this.lignes = new Array();
@@ -261,18 +262,11 @@ export default {
    }
   }
 };
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-h1 {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color:midnightblue;
-  margin-top: 10px;
-}
 ul {
   list-style-type: none;
   padding: 0;
@@ -281,21 +275,11 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a {
-  color: #42b983;
-}
 .tab{
   margin-left: 30px;
 }
 #amphi-car{
   text-align: center;
-}
-select
-{
-  height: 30px;
-  width: 120px;
-  border-radius: 4px;
-  border: 1px solid #555555;
 }
 .inp_selec{
   height: 25px;
@@ -367,7 +351,7 @@ fieldset{
   width: 40px;
   height:40px;
   border-radius: 7px;
-  background-color: mediumvioletred;
+  background-color:cornflowerblue ;
 }
 #affich{
   text-align: center;
