@@ -23,13 +23,13 @@
 <p>
 <label class="tab"> Libellé de placements:  </label><input class="inp_selec" v-model="lib_placement" />
 <button @click="ajouter" class="btnForm">Ajouter</button>
-<label class="tab"> Distance entre étudiants:  </label>  <input v-model="dist" class="inp_selec"/>   
+<label class="tab"> Distance entre étudiants:  </label>  <input v-model="distance" class="inp_selec"/>   
 <button @click="generer" class="btnForm">Génerer</button>
 <button @click="annuler" class="btnForm">Annuler</button>
 </p></fieldset>
 <fieldset class="FormPlacement" v-show="affich_generer_modif">
 <p>
-<label class="tab"> Distance entre étudiants:  </label>  <input v-model="dist" class="inp_selec"/>   
+<label class="tab"> Distance entre étudiants:  </label>  <input v-model="distance" class="inp_selec"/>   
 <button @click="generer" class="btnForm">Génerer</button>
 <button @click="modifier" class="btnForm">Modifier</button>
 <button @click="annuler" class="btnForm">Annuler</button>
@@ -60,7 +60,7 @@
 import {Amphi} from "../classes/amphi.js"
 import {Ligne} from "../classes/ligne.js"
 import {Place} from "../classes/place.js"
-import {Placement} from "../classes/placement.js"
+import placement, {Placement} from "../classes/placement.js"
 export default {
   name: "Amphi_placements",
   data: function() {
@@ -73,7 +73,7 @@ export default {
       place:Place,
       placement:Placement,
       places: Array,
-      dist: "",
+      distance: "",
       selected_placement:"",
       affich_generer_modif:false,
       places_occupées:[],
@@ -121,8 +121,13 @@ export default {
     //Affiche le div pour donner à l'utilisateur la possibilité de modifier le libellé du placement et ses places
     modifier_placement()
     {
+      if(this.selected_placement !== "")
+      {
       this.affich_generer_modif=true;
       this.aficher_nvx_placements=false;
+      }else{
+        alert("veuillez choisire un placement");
+      }
     },
     modifier()
     {
@@ -162,32 +167,41 @@ export default {
     },
    generer()
     {
-      this.nbr_et;
-      let h=0;
-      let plcs;
+      let longueur_plcs;
+      //compteur d'indices en fonction de la distance choisie
       let cpt=0;
       this.reinistialiser();
       for(let j=0;j<this.amphi._lignes.length;j++)
       {
         if(  j%2 === 0 || j===0)
         {
-          plcs=0;
-          plcs = this.amphi._lignes[j]._places.length;
-          h=0;
-          for( let place of this.amphi._lignes[j]._places)
+          longueur_plcs=0;
+          longueur_plcs = this.amphi._lignes[j]._places.length;
+          cpt=0;
+          for( let i=0; i<longueur_plcs;i++)
           {
-            if(h<plcs)
-          {
-            place._occupee="oui";
-            cpt++;
-            if(plcs>parseInt(this.dist)+cpt)
+            if(this.amphi._lignes[j]._places[i]._id === 0)
             {
-              place._occupee="oui";
-              h+=parseInt(this.dist)+1;
               cpt++;
+            }else{
+              if(i!=0 && this.amphi._lignes[j]._places[i-1]._id === 0)
+              {
+                this.amphi._lignes[j]._places[i]._occupee="oui";
+                cpt=i;
+              }else{
+                if(i===0)
+                {
+                  this.amphi._lignes[j]._places[i]._occupee="oui";
+                }else{
+                  cpt+=parseInt(this.distance)+1;
+                  if(cpt<longueur_plcs)
+                  {
+                    this.amphi._lignes[j]._places[cpt]._occupee="oui";
+                  }
+                }
+              }
             }
-
-          }
+           
           }
         }
       }
