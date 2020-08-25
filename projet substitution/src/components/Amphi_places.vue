@@ -73,7 +73,7 @@ export default {
       place:Place,
       placement:Placement,
       places: Array,
-      distance: "",
+      distance: 2,
       selected_placement:"",
       affich_generer_modif:false,
       places_occupées:[],
@@ -126,7 +126,7 @@ export default {
       this.affich_generer_modif=true;
       this.aficher_nvx_placements=false;
       }else{
-        alert("veuillez choisire un placement");
+        alert("Veuillez choisir un placement!!");
       }
     },
     modifier()
@@ -331,7 +331,6 @@ div{
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: left;
   color: #000000;
   margin-top: 10px;
 }
@@ -345,13 +344,8 @@ fieldset{
   color: midnightblue;
 }
 #glob{
-  text-align: center;
-}
-.div_rang{
-  margin: 10px;;
-  border: 1px solid black;
-  display: inline-block;
-  padding: 5;
+  margin-left: 400px;
+  margin-right: 400px;
 }
 .btn_place{
   border: 0.5px solid black;
