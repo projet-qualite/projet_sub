@@ -60,7 +60,7 @@
 import {Amphi} from "../classes/amphi.js"
 import {Ligne} from "../classes/ligne.js"
 import {Place} from "../classes/place.js"
-import placement, {Placement} from "../classes/placement.js"
+import {Placement} from "../classes/placement.js"
 export default {
   name: "Amphi_placements",
   data: function() {
