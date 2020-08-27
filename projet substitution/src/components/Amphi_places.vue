@@ -2,7 +2,7 @@
   <div>
 <div>
   <fieldset>
-<p><label class="custom-file-input" for="file_json" ></label>
+<p><label class="custom-file" for="file_json" ></label>
  <input id="file_json" accept="application/JSON" @change="onFileChange" type="file" style="visibility: hidden" />
 <button @click="enregistrer" class="same">Sauvegarder</button> </p>
   </fieldset>
@@ -365,10 +365,10 @@ fieldset{
 #affich{
   text-align: center;
 }
-.custom-file-input::-webkit-file-upload-button {
+.custom-file::-webkit-file-upload-button {
   visibility: hidden;
 }
-.custom-file-input::before {
+.custom-file::before {
   content: 'Choisir fichier';
   height: 20px;
   width: 120px;
@@ -384,10 +384,10 @@ fieldset{
   white-space: nowrap;
   -webkit-user-select: none;
 }
-.custom-file-input:hover::before {
+.custom-file:hover::before {
   border-color: black;
 }
-.custom-file-input:active::before {
+.custom-file:active::before {
   background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
 }
 </style>
