@@ -105,3 +105,32 @@
 #action{
   display: inline-block;
 }
+.custom-file-input::-webkit-file-upload-button {
+	visibility: hidden;
+  }
+  .custom-file-input::before {
+	margin-top: 25px;
+	margin-left: 500px;
+	margin-right: 400px;
+	margin-bottom: 25px;
+	content: 'Choisir fichier';
+	height: 20px;
+	width: 180;
+	color:black;
+	border-radius: 4px;
+	background-color: whitesmoke;
+	border: 1px solid #555555;
+	font-size: 15px;
+	font-family:Verdana, Geneva, Tahoma, sans-serif;
+	display: inline-block;
+	padding: 5px 8px;
+	outline: none;
+	white-space: nowrap;
+	-webkit-user-select: none;
+  }
+  .custom-file-input:hover::before {
+	border-color: black;
+  }
+  .custom-file-input:active::before {
+	background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+  }
