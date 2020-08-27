@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-      <br/><br/>
-    <input id="file_json" @change="changer" type="file"/><br/><br/><br/>
+     <label class="custom-file-input" for="file_json" ></label>
+    <input id="file_json" @change="changer" type="file"  style="visibility: hidden"/>
     
 
     
@@ -320,7 +320,5 @@ saveAs(blob, filename);
     width:40px;
     height: 45px;
 }
-
-
 
 </style>

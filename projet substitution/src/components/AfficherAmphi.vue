@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-   <br/><br/>  
-    <input id="file_json" @change="changer" type="file"/><br/><br/><br/>
+   <label class="custom-file-input" for="file_json" ></label>
+    <input id="file_json" @change="changer" type="file"  style="visibility: hidden"/>
 
     
     <select class="select-css" v-model="selected" @change="send_ligne(selected)">
@@ -124,7 +124,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
 @import '../assets/style.css';
 
 #bouton {
@@ -144,7 +144,6 @@ export default {
 #place{
     margin-top: 30px;
 }
-
 
 
 </style>
